@@ -197,6 +197,9 @@ Note that passing the variable as a configure option to CMake will always overri
 
 You can use `CPM_SOURCE_CACHE` on GitHub Actions workflows [cache](https://github.com/actions/cache) and combine it with ccache, to make your CI faster. See the [wiki](https://github.com/cpm-cmake/CPM.cmake/wiki/Caching-with-CPM.cmake-and-ccache-on-GitHub-Actions) for more info.
 
+The directory where the version for a project is stored is by default the hash of the arguments to `CPMAddPackage()`.
+If for instance the patch command uses external files, the directory name can be set with the argument `CUSTOM_CACHE_KEY`.
+
 ### CPM_DOWNLOAD_ALL
 
 If set, CPM will forward all calls to `CPMFindPackage` as `CPMAddPackage`.
@@ -412,7 +415,7 @@ CPMAddPackage("gh:nlohmann/json@3.9.1"
 ### [Boost](https://github.com/boostorg/boost)
 
 Boost is a large project and will take a while to download. Using
-`CPM_SOURCE_CACHE` is strongly recomended. Cloning moves much more
+`CPM_SOURCE_CACHE` is strongly recommended. Cloning moves much more
 data than a source archive, so this sample will use a compressed
 source archive (tar.xz) release from Boost's github page.
 
@@ -533,7 +536,7 @@ The URL for branch `v2.x` of spdlog is:
 
 #### Tag
 
-Tags are simiar, but with this format:
+Tags are similar, but with this format:
 
 `https://github.com/<user>/<name>/archive/refs/tags/<tag-name>.<archive-type>`
 
@@ -556,7 +559,7 @@ Example:
 
 ### Determining the Hash
 
-The following snipet illustrates determining the SHA256 hash on a linux machine using `wget` and `sha256sum`:
+The following snippet illustrates determining the SHA256 hash on a linux machine using `wget` and `sha256sum`:
 ```bash
 wget https://github.com/gabime/spdlog/archive/refs/tags/v1.13.0.zip -O - | sha256sum
 ```

@@ -300,12 +300,6 @@ function(CPMFindPackage)
     return()
   endif()
 
-  cpm_check_if_package_already_added(${CPM_ARGS_NAME} "${CPM_ARGS_VERSION}")
-  if(CPM_PACKAGE_ALREADY_ADDED)
-    cpm_export_variables(${CPM_ARGS_NAME})
-    return()
-  endif()
-
   cpm_find_package(${CPM_ARGS_NAME} "${CPM_ARGS_VERSION}" ${CPM_ARGS_FIND_PACKAGE_ARGUMENTS})
 
   if(NOT CPM_PACKAGE_FOUND)
@@ -397,8 +391,8 @@ function(cpm_parse_add_package_single_arg arg outArgs)
     # We don't try to parse the version if it's not provided explicitly. cpm_get_version_from_url
     # should do this at a later point
   else()
-    # We should never get here. This is an assertion and hitting it means there's a bug in the code
-    # above. A packageType was set, but not handled by this if-else.
+    # We should never get here. This is an assertion and hitting it means there's a problem with the
+    # code above. A packageType was set, but not handled by this if-else.
     message(FATAL_ERROR "${CPM_INDENT} Unsupported package type '${packageType}' of '${arg}'")
   endif()
 
@@ -532,6 +526,7 @@ function(CPMAddPackage)
       GIT_SHALLOW
       EXCLUDE_FROM_ALL
       SOURCE_SUBDIR
+      CUSTOM_CACHE_KEY
   )
 
   set(multiValueArgs URL OPTIONS DOWNLOAD_COMMAND)
@@ -720,7 +715,10 @@ function(CPMAddPackage)
     string(TOLOWER ${CPM_ARGS_NAME} lower_case_name)
     set(origin_parameters ${CPM_ARGS_UNPARSED_ARGUMENTS})
     list(SORT origin_parameters)
-    if(CPM_USE_NAMED_CACHE_DIRECTORIES)
+    if(CPM_ARGS_CUSTOM_CACHE_KEY)
+      # Application set a custom unique directory name
+      set(download_directory ${CPM_SOURCE_CACHE}/${lower_case_name}/${CPM_ARGS_CUSTOM_CACHE_KEY})
+    elseif(CPM_USE_NAMED_CACHE_DIRECTORIES)
       string(SHA1 origin_hash "${origin_parameters};NEW_CACHE_STRUCTURE_TAG")
       set(download_directory ${CPM_SOURCE_CACHE}/${lower_case_name}/${origin_hash}/${CPM_ARGS_NAME})
     else()
